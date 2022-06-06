@@ -5,6 +5,24 @@ import (
 	"math/rand"
 	"time"
 )
+
+type Card struct {
+	suits  string
+	number int
+}
+
+type WinInfo struct {
+	Winner     string
+	ComCard    string
+	PlayerCard string
+	otherCards []string
+}
+type Player struct {
+	Money  int
+	Bet    int
+	points int
+}
+
 //測試代碼 十萬次
 func Test_smallbig(t *testing.T) {
 
