@@ -3,6 +3,19 @@ package golang
 import ("fmt"
   "math/rand"
 	"time")
+	
+type Card struct {
+	suits  string
+	number int
+}
+
+type WinInfo struct {
+	Winner     string
+	ComCard    string
+	PlayerCard string
+	otherCards []string
+}
+
 //轉換花色並判斷大小
 func Smallbig() []int {
 
