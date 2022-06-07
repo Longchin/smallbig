@@ -1,0 +1,190 @@
+package golang
+import (
+	"math/rand"
+	"time"
+  "fmt"
+)
+
+type Card struct {
+	suits  string
+	number int
+}
+
+type WinInfo struct {
+	Winner     string
+	ComCard    string
+	PlayerCard string
+	otherCards []string
+}
+type Player struct {
+	Money  int
+	Bet    int
+	points int
+}
+var p Player
+
+func Gamble(C int, r int) {
+	//玩家確認下注量100,200,500,1000
+	// var b int
+	//fmt.Println("可下注額為:100,200,500,1000")
+	// fmt.Print("請玩家確認下注量:")
+	// fmt.Scanln(&b)
+	// p.Bet = b
+	p.Bet = C
+	//一下注就減去下注量
+	p.Money -= p.Bet
+	//判斷贏分
+	switch p.Bet {
+	case 100:
+		if r == 1 {
+			p.points = 100 * 1.98
+		} else {
+			p.points = 0
+		}
+
+	case 200:
+		if r == 1 {
+			p.points = 200 * 1.98
+		} else {
+			p.points = 0
+		}
+
+	case 500:
+		if r == 1 {
+			p.points = 500 * 1.98
+		} else {
+			p.points = 0
+		}
+	case 1000:
+		if r == 1 {
+			p.points = 1000 * 1.98
+		} else {
+			p.points = 0
+		}
+	}
+	p.Money += p.points
+	//fmt.Println(p.Money)
+
+}
+func GetTakeCards() []int {
+	var Cards []int
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < 4; i++ {
+		Cards = append(Cards, rand.Intn(52))
+	}
+	return Cards
+}
+
+// 判斷牌組是否重複
+func WetherSame(card []int) []int {
+	for i := 0; i < 3; i++ {
+		for j := i + 1; j < 4; j++ {
+			if card[i] == card[j] {
+				card = GetTakeCards()
+
+				i = -1
+				break
+			}
+		}
+	}
+	return card
+}
+
+//轉換花色並判斷大小
+func Smallbig() int {
+
+	var c Card
+	var Result int
+	var Cards, x []int
+	var suit []string
+	var xyy [4]int
+	info := WinInfo{}
+	takeCards := GetTakeCards()
+	Cards = WetherSame(takeCards)
+	for i := 0; i < 4; i++ {
+		xyy[i] = Cards[i] % 4
+		switch xyy[i] {
+		case 0:
+			c.suits = "D"
+		case 1:
+			c.suits = "C"
+		case 2:
+			c.suits = "B"
+		case 3:
+			c.suits = "A"
+		}
+		number := Cards[i]%13 + 1
+		suit = append(suit, c.suits)
+		x = append(x, number)
+
+	}
+	//判斷勝利並展示牌組
+	// fmt.Println("電腦的牌組:  ", suit[0], x[0])
+	// fmt.Println("玩家的牌組:  ", suit[1], x[1])
+	// fmt.Println("玩家剩的牌組:", suit[2], x[2])
+	// fmt.Println("玩家剩的牌組:", suit[3], x[3])
+
+	for i := 0; i < 2; i++ {
+
+		if x[i] == 1 {
+			x[i] += 52
+		}
+	}
+
+	if x[0] > x[1] {
+		info.Winner = "computer"
+		//fmt.Println("電腦獲勝")
+		Result = 0
+	} else if x[0] == x[1] {
+		if Cards[0] > Cards[1] {
+			info.Winner = "computer"
+			//fmt.Println("電腦獲勝")
+			Result = 0
+
+		} else {
+			info.Winner = "player"
+			//fmt.Println("玩家獲勝")
+			Result = 1
+		}
+
+	} else {
+		info.Winner = "player"
+		//fmt.Println("玩家獲勝")
+		Result = 1
+
+	}
+	//fmt.Println("")
+	return Result
+}
+
+
+func Test_smallbig(t *testing.T) {
+	RTP := 1.98
+	var Win float64
+	x := 0
+	var sum int
+	if p.Bet == 100 {
+
+	} else if p.Bet == 200 {
+
+	} else if p.Bet == 500 {
+
+	} else if p.Bet == 1000 {
+
+	} else {
+		return
+	}
+
+	for i := 0; i < 1000; i++ {
+		r := Smallbig()
+		Gamble(p.Bet, r)
+		sum += r
+		x++
+	}
+
+	Win = float64(sum) / float64(x)
+	fmt.Println("總測試次數:", x)
+	fmt.Println("玩家勝率:", Win)
+	fmt.Println("RTP:", RTP*float64(Win))
+
+}
